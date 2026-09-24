@@ -53,13 +53,13 @@ func (h *RecipeHandler) AddIngredient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	recipeID := r.URL.Query().Get("recipe_id")
-	if recipeID == "" {
+	id := r.PathValue("id")
+	if id == "" {
 		http.Error(w, "Missing recipe_id parameter", http.StatusBadRequest)
 		return
 	}
 
-	if err := h.dao.AddIngredient(recipeID, &ingredient); err != nil {
+	if err := h.dao.AddIngredient(id, &ingredient); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

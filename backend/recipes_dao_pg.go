@@ -36,7 +36,6 @@ func (dao *RecipeDaoPg) GetAll() ([]*Recipe, error) {
 	for rows.Next() {
 		var rID, rTitle string
 		var rCreatedAt time.Time
-
 		var iID, iName sql.NullString
 
 		if err := rows.Scan(&rID, &rTitle, &rCreatedAt, &iID, &iName); err != nil {
@@ -63,6 +62,44 @@ func (dao *RecipeDaoPg) GetAll() ([]*Recipe, error) {
 			})
 		}
 	}
-
 	return recipes, nil
+}
+
+func (dao *RecipeDaoPg) Create(recipe *Recipe) error {
+	_, err := dao.conn.Exec(`INSERT INTO recipes (id, title, created_at) VALUES ($1, $2, $3)`, recipe.ID, recipe.Title, recipe.CreatedAt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (dao *RecipeDaoPg) AddIngredient(recipeID string, ingredient *Ingredient) error {
+	_, err := dao.conn.Exec(`INSERT INTO ingredients (id, recipe_id, name) VALUES ($1, $2, $3)`, ingredient.ID, recipeID, ingredient.Name)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (dao *RecipeDaoPg) DeleteRecipe(recipeID string) error {
+	_, err := dao.conn.Exec(`DELETE FROM ingredients WHERE recipe_id = $1`, recipeID)
+	if err != nil {
+		return err
+	}
+	_, err = dao.conn.Exec(`DELETE FROM recipes WHERE id = $1`, recipeID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func (dao *RecipeDaoPg) DeleteIngredient(ingredientID string) error {
+	_, err := dao.conn.Exec(`DELETE FROM ingredients WHERE id = $1`, ingredientID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

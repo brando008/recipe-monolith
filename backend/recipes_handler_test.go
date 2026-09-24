@@ -15,7 +15,7 @@ type MockRecipeDao struct {
 
 func (m *MockRecipeDao) Create(recipe *Recipe) error {
 	if m.ForceError {
-		return errors.New("simpulated database crash")
+		return errors.New("simulated database crash")
 	}
 
 	recipe.ID = "mock-id"
@@ -24,7 +24,7 @@ func (m *MockRecipeDao) Create(recipe *Recipe) error {
 
 func (m *MockRecipeDao) AddIngredient(recipeID string, ingredient *Ingredient) error {
 	if m.ForceError {
-		return errors.New("simpulated database crash")
+		return errors.New("simulated database crash")
 	}
 
 	ingredient.ID = "mock-ingredient-id"
