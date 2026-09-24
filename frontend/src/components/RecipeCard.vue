@@ -3,13 +3,12 @@ import { ref } from 'vue';
 import { api, type Recipe } from '../api';
 
 const props = defineProps<{ recipe: Recipe }>();
-const emit = defineEmits(['refresh']); // Tells the parent to reload data
+const emit = defineEmits(['refresh']);
 
 const newIngredient = ref('');
 
 const handleAddIngredient = async () => {
   if (!newIngredient.value.trim() || !props.recipe.id) return;
-  
   await api.addIngredient(props.recipe.id, newIngredient.value);
   newIngredient.value = ''; 
   emit('refresh'); 
@@ -32,46 +31,53 @@ const handleDeleteRecipe = async () => {
   <div class="card">
     <div class="header">
       <h2>{{ recipe.title }}</h2>
-      <button @click="handleDeleteRecipe" class="danger">Delete Recipe</button>
+      <button @click="handleDeleteRecipe" class="danger">[ DELETE_RECIPE ]</button>
     </div>
 
     <ul class="ingredient-list">
       <li v-for="ing in recipe.ingredients" :key="ing.id">
-        {{ ing.name }}
-        <button @click="handleDeleteIngredient(ing.id)" class="small-danger">x</button>
+        <span>- {{ ing.name }}</span>
+        <button @click="handleDeleteIngredient(ing.id)" class="small-danger">[x]</button>
       </li>
     </ul>
     
     <p v-if="!recipe.ingredients || recipe.ingredients.length === 0" class="empty">
-      No ingredients yet. Add one below!
+      // NO_INGREDIENTS_FOUND
     </p>
 
     <form @submit.prevent="handleAddIngredient" class="add-ingredient-form">
+      <span class="prompt">~</span>
       <input 
         v-model="newIngredient" 
-        placeholder="Type an ingredient and hit Enter" 
+        placeholder="ADD_INGREDIENT..." 
         type="text" 
       />
-      <button type="submit">Add</button>
+      <button type="submit">[ ADD ]</button>
     </form>
   </div>
 </template>
 
 <style scoped>
 .card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px dashed #33ff00;
   padding: 1rem;
   margin-bottom: 1.5rem;
-  background: #f9f9f9;
+  background: #000;
+  color: #33ff00;
 }
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  border-bottom: 1px dashed #1a8000;
+  padding-bottom: 0.5rem;
 }
-.header h2 { margin: 0; }
+.header h2 { 
+  margin: 0; 
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
 .ingredient-list {
   list-style-type: none;
   padding: 0;
@@ -79,19 +85,42 @@ const handleDeleteRecipe = async () => {
 .ingredient-list li {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem;
-  background: white;
-  border: 1px solid #eee;
-  margin-bottom: 0.25rem;
-  border-radius: 4px;
+  padding: 0.5rem 0;
 }
 .add-ingredient-form {
   display: flex;
   gap: 0.5rem;
   margin-top: 1rem;
+  align-items: center;
 }
-.add-ingredient-form input { flex-grow: 1; padding: 0.5rem; }
-.danger { background: #ff4c4c; color: white; border: none; padding: 0.5rem; border-radius: 4px; cursor: pointer;}
-.small-danger { background: transparent; color: #ff4c4c; border: none; cursor: pointer; font-weight: bold;}
-.empty { font-style: italic; color: #666; font-size: 0.9rem;}
+.prompt {
+  color: #33ff00;
+}
+.add-ingredient-form input { 
+  flex-grow: 1; 
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dotted #33ff00;
+  color: #33ff00;
+  font-family: 'Courier New', Courier, monospace;
+  outline: none;
+}
+.add-ingredient-form input::placeholder {
+  color: #1a8000;
+}
+.danger, .small-danger, .add-ingredient-form button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #33ff00;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+}
+.danger { border-color: #ff3333; color: #ff3333; }
+.danger:hover { background: #ff3333; color: #000; }
+.small-danger { color: #ff3333; font-weight: bold; }
+.small-danger:hover { color: #fff; background: #ff3333; }
+.add-ingredient-form button { border: 1px solid #33ff00; }
+.add-ingredient-form button:hover { background: #33ff00; color: #000; }
+.empty { font-style: italic; color: #1a8000; font-size: 0.9rem;}
 </style>
