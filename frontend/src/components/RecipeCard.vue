@@ -77,6 +77,7 @@ const handleDeleteRecipe = async () => {
   margin: 0; 
   font-size: 1.2rem;
   text-transform: uppercase;
+  color: #33ff00;
 }
 .ingredient-list {
   list-style-type: none;
