@@ -3,6 +3,9 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type RecipeHandler struct {
@@ -36,6 +39,9 @@ func (h *RecipeHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	recipe.ID = "rec-" + uuid.New().String()
+	recipe.CreatedAt = time.Now()
+
 	if err := h.dao.Create(&recipe); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -59,6 +65,8 @@ func (h *RecipeHandler) AddIngredient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	ingredient.ID = "rec-" + uuid.New().String()
+
 	if err := h.dao.AddIngredient(id, &ingredient); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -71,6 +79,10 @@ func (h *RecipeHandler) AddIngredient(w http.ResponseWriter, r *http.Request) {
 
 func (h *RecipeHandler) DeleteRecipe(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
+	if id == "" {
+		http.Error(w, "missing recipe id in url", http.StatusBadRequest)
+		return
+	}
 
 	if err := h.dao.DeleteRecipe(id); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

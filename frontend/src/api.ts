@@ -32,7 +32,7 @@ export const api = {
   },
 
   async addIngredient(recipeId: string, name: string): Promise<void> {
-    const res = await fetch(`${API_URL}/recipes/${recipeId}/ingredients`, {
+    const res = await fetch(`${API_URL}/recipes/${recipeId}/ingredients/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
